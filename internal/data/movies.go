@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/lib/pq"
 	"greenlight.islandwind.me/internal/validator"
-	"time"
 )
 
 type Movie struct {
@@ -157,7 +158,11 @@ func (m MovieModel) Delete(id int64) error {
 	return nil
 }
 
-func (m MovieModel) GetAll(title string, genres []string, filters Filters) ([]*Movie, Metadata, error) {
+func (m MovieModel) GetAll(
+	title string,
+	genres []string,
+	filters Filters,
+) ([]*Movie, Metadata, error) {
 	query := fmt.Sprintf(`
         SELECT count(*) OVER(), id, created_at, title, year, runtime, genres, version
         FROM movies

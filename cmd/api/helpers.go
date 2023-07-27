@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
-	"greenlight.islandwind.me/internal/validator"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/julienschmidt/httprouter"
+	"greenlight.islandwind.me/internal/validator"
 )
 
 func (app *application) readIDParam(r *http.Request) (int64, error) {
@@ -26,7 +27,12 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 
 type envelope map[string]any
 
-func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
+func (app *application) writeJSON(
+	w http.ResponseWriter,
+	status int,
+	data envelope,
+	headers http.Header,
+) error {
 	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
@@ -61,16 +67,25 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 
 		switch {
 		case errors.As(err, &syntaxError):
-			return fmt.Errorf("body contains badly-formed JSON (at character %d)", syntaxError.Offset)
+			return fmt.Errorf(
+				"body contains badly-formed JSON (at character %d)",
+				syntaxError.Offset,
+			)
 
 		case errors.Is(err, io.ErrUnexpectedEOF):
 			return errors.New("body contains badly-formed JSON")
 
 		case errors.As(err, &unmarshalTypeError):
 			if unmarshalTypeError.Field != "" {
-				return fmt.Errorf("body contains incorrect JSON type for field %q", unmarshalTypeError.Field)
+				return fmt.Errorf(
+					"body contains incorrect JSON type for field %q",
+					unmarshalTypeError.Field,
+				)
 			}
-			return fmt.Errorf("body contains incorrect JSON type (at character %d)", unmarshalTypeError.Offset)
+			return fmt.Errorf(
+				"body contains incorrect JSON type (at character %d)",
+				unmarshalTypeError.Offset,
+			)
 
 		case errors.Is(err, io.EOF):
 			return errors.New("body must not be empty")
@@ -118,7 +133,12 @@ func (app *application) readCSV(qs url.Values, key string, defaultValue []string
 	return strings.Split(csv, ",")
 }
 
-func (app *application) readInt(qs url.Values, key string, defaultValue int, v *validator.Validator) int {
+func (app *application) readInt(
+	qs url.Values,
+	key string,
+	defaultValue int,
+	v *validator.Validator,
+) int {
 	s := qs.Get(key)
 
 	if s == "" {

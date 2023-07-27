@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/time/rate"
 	"net/http"
+
+	"golang.org/x/time/rate"
 )
 
 func (app *application) recoverPanic(next http.Handler) http.Handler {

@@ -5,13 +5,14 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	_ "github.com/lib/pq"
-	"greenlight.islandwind.me/internal/data"
-	"greenlight.islandwind.me/internal/jsonlog"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	_ "github.com/lib/pq"
+	"greenlight.islandwind.me/internal/data"
+	"greenlight.islandwind.me/internal/jsonlog"
 )
 
 const version = "1.0.0"
@@ -42,7 +43,12 @@ func main() {
 	flag.StringVar(&cfg.db.dsn, "db-dsn", os.Getenv("GREENLIGHT_DB_DSN"), "PostgreSQL DSN")
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
-	flag.StringVar(&cfg.db.maxIdleTime, "db-max-idle-time", "15m", "PostgreSQL max connections idle time")
+	flag.StringVar(
+		&cfg.db.maxIdleTime,
+		"db-max-idle-time",
+		"15m",
+		"PostgreSQL max connections idle time",
+	)
 
 	flag.Parse()
 

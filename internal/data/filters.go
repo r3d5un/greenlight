@@ -1,9 +1,10 @@
 package data
 
 import (
-	"greenlight.islandwind.me/internal/validator"
 	"math"
 	"strings"
+
+	"greenlight.islandwind.me/internal/validator"
 )
 
 type Filters struct {
