@@ -153,3 +153,18 @@ func (app *application) readInt(
 
 	return i
 }
+
+// Helper function that accepts an arbitrary function as a parameter,
+// lanches the function as a background process, and recovers from any
+// errors that should occurr, keeping the web app from terminating.
+func (app *application) background(fn func()) {
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				app.logger.PrintError(fmt.Errorf("%s", err), nil)
+			}
+		}()
+
+		fn()
+	}()
+}
