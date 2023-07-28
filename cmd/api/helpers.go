@@ -158,7 +158,11 @@ func (app *application) readInt(
 // lanches the function as a background process, and recovers from any
 // errors that should occurr, keeping the web app from terminating.
 func (app *application) background(fn func()) {
+	app.wg.Add(1)
+
 	go func() {
+		defer app.wg.Done()
+
 		defer func() {
 			if err := recover(); err != nil {
 				app.logger.PrintError(fmt.Errorf("%s", err), nil)
