@@ -1,3 +1,7 @@
+# ==================================================================================== #
+# HELPERS
+# ==================================================================================== #
+
 ## help: print this help message
 .PHONY: help
 help:
@@ -7,6 +11,10 @@ help:
 .PHONY: confirm
 confirm:
 	@echo -n 'Are you sure? [y/N] ' && read ans && [ $${ans:-N} = y ]
+
+# ==================================================================================== #
+# DEVELOPMENT
+# ==================================================================================== #
 
 ## run/api: run the cmd/api application
 .PHONY: run/api
@@ -29,3 +37,20 @@ db/migrations/new:
 db/migrations/up: confirm
 	@echo 'Running up migrations...'
 	migrate -path ./migrations -database ${GREENLIGHT_DB_DSN} up
+
+# ==================================================================================== #
+# QUALITY CONTROL
+# ==================================================================================== #
+
+.PHONY: audit
+audit:
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	staticcheck ./...
+	@echo 'Running tests...'
+	go test -race -vet=off ./...
