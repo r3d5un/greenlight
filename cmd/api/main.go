@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"expvar"
 	"flag"
+	"fmt"
 	"os"
 	"runtime"
 	"strings"
@@ -15,9 +16,12 @@ import (
 	"greenlight.islandwind.me/internal/data"
 	"greenlight.islandwind.me/internal/jsonlog"
 	"greenlight.islandwind.me/internal/mailer"
+	"greenlight.islandwind.me/internal/vcs"
 )
 
-const version = "1.0.0"
+var (
+	version = vcs.Version()
+)
 
 type config struct {
 	port int
@@ -93,7 +97,14 @@ func main() {
 		},
 	)
 
+	displayVersion := flag.Bool("version", false, "Display version and exit")
+
 	flag.Parse()
+
+	if *displayVersion {
+		fmt.Printf("Version: \t%s\n", version)
+		os.Exit(0)
+	}
 
 	logger := jsonlog.New(os.Stdout, jsonlog.LevelInfo)
 
